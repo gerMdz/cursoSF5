@@ -1,0 +1,19 @@
+App\Entity\User:
+  attributes:
+    normalization_context:
+      groups: [user_read]
+  collectionOperations:
+    register:
+      method: POST
+      path: /users/register
+      controller: App\Action\User\Register
+      denormalization_context:
+        groups: [user_post]
+      openapi_context:
+        summary: Registrar un nuevo usuario
+
+  itemOperations:
+    get:
+      method: GET
+
+
