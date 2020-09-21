@@ -26,3 +26,4 @@ docker-compose.yml
 .idea/dataSources
 
 .ideaold
+/src/Migrations/Version20200916142948.php
