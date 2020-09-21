@@ -9,6 +9,8 @@ framework:
     php_errors:
         log: true
 
+    ide: phpstorm
+
     serializer:
         mapping:
             path:

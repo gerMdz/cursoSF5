@@ -24,3 +24,5 @@ docker-compose.yml
 ###< lexik/jwt-authentication-bundle ###
 .idea
 .idea/dataSources
+
+.ideaold
