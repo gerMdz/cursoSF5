@@ -6,15 +6,24 @@ namespace App\Service\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use function array_key_exists;
+use function array_merge;
+use function is_array;
+use function json_decode;
+use function sprintf;
 
 class RequestService
 {
     /**
+     * @param Request $request
+     * @param string $fieldName
+     * @param bool $isRequired
+     * @param bool $isArray
      * @return mixed
      */
     public static function getField(Request $request, string $fieldName, bool $isRequired = true, bool $isArray = false)
     {
-        $requestData = \json_decode($request->getContent(), true);
+        $requestData = json_decode($request->getContent(), true);
 
         if ($isArray) {
             $arrayData = self::arrayFlatten($requestData);
@@ -26,18 +35,18 @@ class RequestService
             }
 
             if ($isRequired) {
-                throw new BadRequestHttpException(\sprintf('Missing field %s', $fieldName));
+                throw new BadRequestHttpException(sprintf('Missing field %s', $fieldName));
             }
 
             return null;
         }
 
-        if (\array_key_exists($fieldName, $requestData)) {
+        if (array_key_exists($fieldName, $requestData)) {
             return $requestData[$fieldName];
         }
 
         if ($isRequired) {
-            throw new BadRequestHttpException(\sprintf('Missing field %s', $fieldName));
+            throw new BadRequestHttpException(sprintf('Missing field %s', $fieldName));
         }
 
         return null;
@@ -48,8 +57,8 @@ class RequestService
         $return = [];
 
         foreach ($array as $key => $value) {
-            if (\is_array($value)) {
-                $return = \array_merge($return, self::arrayFlatten($value));
+            if (is_array($value)) {
+                $return = array_merge($return, self::arrayFlatten($value));
             } else {
                 $return[$key] = $value;
             }
