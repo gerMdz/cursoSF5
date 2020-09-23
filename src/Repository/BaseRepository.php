@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
@@ -15,16 +15,31 @@ use Doctrine\Persistence\Mapping\MappingException;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 
-abstract class BaseRepository extends ServiceEntityRepository
+abstract class BaseRepository
 {
     private ManagerRegistry $managerRegistry;
     protected Connection $connection;
     protected ObjectRepository $objectRepository;
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(ManagerRegistry $managerRegistry, Connection $connection)
+    /**
+     * BaseRepository constructor.
+     * @param EntityManagerInterface $em
+     * @param Connection $connection
+     */
+    public function __construct(EntityManagerInterface $em, Connection $connection)
     {
-        $this->managerRegistry = $managerRegistry;
+
         $this->connection = $connection;
+
+        $this->entityManager = $em;
+    }
+
+    public function getobjectRepository()
+    {
         $this->objectRepository = $this->getEntityManager()->getRepository($this->entityClass());
     }
 
@@ -33,13 +48,13 @@ abstract class BaseRepository extends ServiceEntityRepository
      */
     public function getEntityManager()
     {
-        $entityManager = $this->managerRegistry->getManager();
+        return $entityManager = $this->entityManager;
 
-        if ($entityManager->isOpen()) {
-            return $entityManager;
-        }
-
-        return $this->managerRegistry->resetManager();
+//        if ($entityManager->isOpen()) {
+//            return $entityManager;
+//        }
+//
+//        return $this->managerRegistry->resetManager();
     }
 
     abstract protected static function entityClass(): string;
@@ -76,7 +91,6 @@ abstract class BaseRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param object $entity
      * @throws ORMException
      * @throws OptimisticLockException
      */
@@ -87,9 +101,6 @@ abstract class BaseRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $query
-     * @param array $params
-     * @return array
      * @throws DBALException
      */
     protected function executeFetchQuery(string $query, array $params = []): array
@@ -98,8 +109,6 @@ abstract class BaseRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $query
-     * @param array $params
      * @throws DBALException
      */
     protected function executeQuery(string $query, array $params = []): void

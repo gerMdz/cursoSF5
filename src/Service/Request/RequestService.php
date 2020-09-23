@@ -52,6 +52,10 @@ class RequestService
         return null;
     }
 
+    /**
+     * @param array $array
+     * @return array
+     */
     public static function arrayFlatten(array $array): array
     {
         $return = [];
