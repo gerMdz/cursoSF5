@@ -220,6 +220,10 @@ class User implements UserInterface
 
         return $this;
     }
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
 
     public function getActive(): ?bool
     {

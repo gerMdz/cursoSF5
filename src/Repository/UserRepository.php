@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Exception\User\UserAlreadyExistException;
 use App\Exception\User\UserNotFoundException;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
@@ -28,22 +26,15 @@ class UserRepository extends BaseRepository
     }
 
     /**
-     * @param User $user
      * @throws ORMException
      * @throws OptimisticLockException
      */
     public function save(User $user): void
     {
-        try {
-            $this->saveEntity($user);
-        } catch (DBALException $e) {
-            throw UserAlreadyExistException::fromEmail($user->getEmail());
-        }
-
+        $this->saveEntity($user);
     }
 
     /**
-     * @param User $user
      * @throws ORMException
      * @throws OptimisticLockException
      */
